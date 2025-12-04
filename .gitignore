@@ -1,0 +1,10 @@
+
+/.idea
+
+/server-side/.idea
+
+/server-side/dist
+/server-side/node_modules
+/server-side/build
+
+/server-side/.env
