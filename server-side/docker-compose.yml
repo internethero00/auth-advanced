@@ -1,4 +1,4 @@
-version: '3.7'
+
 
 services:
   db:
@@ -18,11 +18,11 @@ services:
 
   redis:
     container_name: redis
-    image: redis:5.0
+    image: redis:7
     restart: always
     ports:
       - 6379:6379
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     volumes:
       - redis_data:/data
     networks:
