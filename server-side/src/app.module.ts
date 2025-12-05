@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { IS_DEV_ENV } from './libs/common/utils/is-dev.utils';
+import { IS_DEV_ENV } from './libs/common/utils/is-dev.util';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { IS_DEV_ENV } from './libs/common/utils/is-dev.utils';
       isGlobal: true,
       ignoreEnvFile: IS_DEV_ENV,
     }),
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
