@@ -3,20 +3,27 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
-import IORedis from 'ioredis';
 import session from 'express-session';
 import { ms, StringValue } from './libs/common/utils/ms.util';
 import { parseBoolean } from './libs/common/utils/parse-boolean.util';
 import { RedisStore } from 'connect-redis';
+import { createClient } from 'redis';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = app.get(ConfigService);
-  const redis = new IORedis({
-    host: config.getOrThrow<string>('REDIS_HOST'),
-    port: Number(config.getOrThrow<string>('REDIS_PORT')),
-    password: config.getOrThrow<string>('REDIS_PASSWORD'),
+  const redisClient = createClient({
+    url: config.getOrThrow<string>('REDIS_URI'),
+  });
+
+  redisClient.on('error', (err) => console.error('REDIS CLIENT ERROR', err));
+
+  await redisClient.connect();
+
+  const store = new RedisStore({
+    client: redisClient,
+    prefix: config.getOrThrow<string>('SESSION_FOLDER'),
   });
 
   app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')));
@@ -29,6 +36,7 @@ async function bootstrap() {
 
   app.use(
     session({
+      store,
       secret: config.getOrThrow<string>('SESSION_SECRET'),
       name: config.getOrThrow<string>('SESSION_NAME'),
       resave: true,
@@ -40,10 +48,6 @@ async function bootstrap() {
         secure: parseBoolean(config.getOrThrow<string>('SESSION_SECURE')),
         sameSite: 'lax',
       },
-      store: new RedisStore({
-        client: redis,
-        prefix: config.getOrThrow<string>('SESSION_FOLDER'),
-      }),
     }),
   );
 
