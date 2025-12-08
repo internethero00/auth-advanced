@@ -60,8 +60,6 @@ export class AuthService {
             new InternalServerErrorException('Could not destroy session'),
           );
         }
-        console.log(req.headers.cookie);
-        console.log(req.cookies);
         res.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'));
         return resolve();
       });
