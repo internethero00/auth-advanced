@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import type { TypeBaseProviderOptions } from './types/base-provider-options.types';
 import { TypeUserInfo } from './types/user-info.types';
+import { extractUserInfoTypes } from './types/googleProfile';
 
 @Injectable()
 export class BaseOAuthService {
@@ -12,7 +13,7 @@ export class BaseOAuthService {
 
   public constructor(private readonly options: TypeBaseProviderOptions) {}
 
-  protected extractUserInfo(data: TypeUserInfo): TypeUserInfo {
+  protected extractUserInfo(data: extractUserInfoTypes): TypeUserInfo {
     return {
       ...data,
       provider: this.options.name,
@@ -67,7 +68,7 @@ export class BaseOAuthService {
     if (!userRequest.ok) {
       throw new UnauthorizedException('user request failed');
     }
-    const user = (await userRequest.json()) as TypeUserInfo;
+    const user = (await userRequest.json()) as extractUserInfoTypes;
     const userData = this.extractUserInfo(user);
 
     return {
