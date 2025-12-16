@@ -13,7 +13,7 @@ export class BaseOAuthService {
 
   public constructor(private readonly options: TypeBaseProviderOptions) {}
 
-  protected extractUserInfo(data: extractUserInfoTypes): TypeUserInfo {
+  protected extractUserInfo(data: extractUserInfoTypes): any {
     return {
       ...data,
       provider: this.options.name,
@@ -69,8 +69,10 @@ export class BaseOAuthService {
       throw new UnauthorizedException('user request failed');
     }
     const user = (await userRequest.json()) as extractUserInfoTypes;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const userData = this.extractUserInfo(user);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
       ...userData,
       access_token: tokenResponse.access_token,

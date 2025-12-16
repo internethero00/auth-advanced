@@ -12,12 +12,16 @@ import type { Request, Response } from 'express';
 import { LoginDto } from './dto/loginDto';
 import { verify } from 'argon2';
 import { ConfigService } from '@nestjs/config';
+import { ProviderService } from './provider/provider.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly configService: ConfigService,
+    private readonly providerService: ProviderService,
+    private readonly prismaService: PrismaService,
   ) {}
   public async register(req: Request, dto: RegisterDto) {
     const { email, password, name } = dto;
@@ -64,6 +68,25 @@ export class AuthService {
         return resolve();
       });
     });
+  }
+
+  public async extractProfileFromCode(
+    req: Request,
+    provider: string,
+    code: string,
+  ) {
+    const providerInstance = this.providerService.findByService(provider);
+    const profile = await providerInstance?.findUserByCode(code);
+    const account = await this.prismaService.account.findFirst({
+      where: {
+        id: String(profile!.id),
+        provider: profile!.provider,
+      },
+    });
+
+    let user = account?.userId
+      ? await this.userService.findById(account.userId)
+      : null;
   }
 
   private async saveSession(req: Request, user: User) {

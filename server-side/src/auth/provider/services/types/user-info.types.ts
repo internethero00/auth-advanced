@@ -1,5 +1,5 @@
 export type TypeUserInfo = {
-  id?: number;
+  id: number;
   name?: string | undefined;
   email: string;
   picture?: string | undefined;
