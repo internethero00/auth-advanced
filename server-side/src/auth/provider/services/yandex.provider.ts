@@ -17,6 +17,7 @@ export class YandexProvider extends BaseOAuthService {
   }
 
   public extendProfile(data: YandexProfile): TypeUserInfo {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.extractUserInfo({
       email: data.emails?.[0] ?? data.default_email,
       name: data.display_name ?? data.real_name,

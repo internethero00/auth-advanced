@@ -17,6 +17,7 @@ export class GoogleProvider extends BaseOAuthService {
   }
 
   public extendProfile(data: GoogleProfile): TypeUserInfo {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.extractUserInfo({
       email: data.email,
       name: data.name,

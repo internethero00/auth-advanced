@@ -87,6 +87,34 @@ export class AuthService {
     let user = account?.userId
       ? await this.userService.findById(account.userId)
       : null;
+
+    if (user) {
+      return this.saveSession(req, user);
+    }
+    user = await this.userService.create(
+      profile!.email,
+      '',
+      profile!.name!,
+      profile!.picture!,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      AuthMethod[profile!.provider.toUpperCase()],
+      true,
+    );
+
+    if (!account) {
+      await this.prismaService.account.create({
+        data: {
+          userId: user.id,
+          type: 'oauth',
+          provider: profile!.provider,
+          accessToken: profile!.access_token,
+          refreshToken: profile!.refresh_token,
+          expiresAt: profile!.expires_at!,
+        },
+      });
+    }
+
+    return this.saveSession(req, user);
   }
 
   private async saveSession(req: Request, user: User) {
