@@ -14,6 +14,8 @@ import { verify } from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { ProviderService } from './provider/provider.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { userCreateYandexChanger } from './provider/services/types/userCreateYandexChanger';
+import { YandexProfile } from './provider/services/types/yandexProfile';
 
 @Injectable()
 export class AuthService {
@@ -77,12 +79,14 @@ export class AuthService {
   ) {
     const providerInstance = this.providerService.findByService(provider);
     const profile = await providerInstance?.findUserByCode(code);
+    console.log(profile);
     const account = await this.prismaService.account.findFirst({
       where: {
         id: String(profile!.id),
         provider: profile!.provider,
       },
     });
+    // console.log(account);
 
     let user = account?.userId
       ? await this.userService.findById(account.userId)
@@ -91,20 +95,37 @@ export class AuthService {
     if (user) {
       return this.saveSession(req, user);
     }
-    user = await this.userService.create(
-      profile!.email,
-      '',
-      profile!.name!,
-      profile!.picture!,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      AuthMethod[profile!.provider.toUpperCase()],
-      true,
-    );
+    console.log(user);
+    if (profile!.provider === 'google') {
+      user = await this.userService.create(
+        profile!.email,
+        '',
+        profile!.name!,
+        profile!.picture!,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        AuthMethod[profile!.provider.toUpperCase()],
+        true,
+      );
+    }
+    if (profile!.provider === 'yandex') {
+      const userData = userCreateYandexChanger(
+        profile as unknown as YandexProfile,
+      );
+      user = await this.userService.create(
+        userData.email,
+        '',
+        userData.displayName!,
+        userData.picture!,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        userData.method,
+        userData.isVerified,
+      );
+    }
 
     if (!account) {
       await this.prismaService.account.create({
         data: {
-          userId: user.id,
+          userId: user!.id,
           type: 'oauth',
           provider: profile!.provider,
           accessToken: profile!.access_token,
@@ -114,7 +135,7 @@ export class AuthService {
       });
     }
 
-    return this.saveSession(req, user);
+    return this.saveSession(req, user!);
   }
 
   private async saveSession(req: Request, user: User) {

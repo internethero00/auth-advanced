@@ -2,6 +2,7 @@ export interface YandexProfile {
   login: string;
   id: string;
   client_id: string;
+  provider: string;
   psuid: string;
   emails?: string[];
   default_email: string;

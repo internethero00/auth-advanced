@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import type { TypeBaseProviderOptions } from './types/base-provider-options.types';
-import { TypeUserInfo } from './types/user-info.types';
+import { GoogleTokenResponse, TypeUserInfo } from './types/user-info.types';
 import { extractUserInfoTypes } from './types/googleProfile';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class BaseOAuthService {
       redirect_uri: this.getRedirectUrl(),
       scope: (this.options.scopes ?? []).join(' '),
       access_type: 'offline',
-      prompt: 'select_account',
+      prompt: 'consent',
     });
     return `${this.options.authorize_url}?${query}`;
   }
@@ -50,18 +50,19 @@ export class BaseOAuthService {
       },
       body: tokenQuery,
     });
-    const tokenResponse = (await tokenRequest.json()) as TypeUserInfo;
     if (!tokenRequest.ok) {
       throw new BadRequestException('token request failed');
     }
+    const tokens = (await tokenRequest.json()) as GoogleTokenResponse;
+    // console.log(tokens);
 
-    if (!tokenResponse.access_token) {
+    if (!tokens.access_token) {
       throw new BadRequestException('token response failed');
     }
 
     const userRequest = await fetch(this.options.profile_url, {
       headers: {
-        Authorization: `Bearer ${tokenResponse.access_token}`,
+        Authorization: `Bearer ${tokens.access_token}`,
       },
     });
 
@@ -71,13 +72,14 @@ export class BaseOAuthService {
     const user = (await userRequest.json()) as extractUserInfoTypes;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const userData = this.extractUserInfo(user);
+    console.log(userData);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
       ...userData,
-      access_token: tokenResponse.access_token,
-      refresh_token: tokenResponse.refresh_token,
-      expires_at: tokenResponse.expires_at,
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      expires_at: tokens.expires_in,
       provider: this.options.name,
     };
   }

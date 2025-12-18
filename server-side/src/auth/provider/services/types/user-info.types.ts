@@ -8,3 +8,12 @@ export type TypeUserInfo = {
   expires_at?: number;
   provider: string;
 };
+
+export type GoogleTokenResponse = {
+  access_token: string;
+  expires_in?: number;
+  refresh_token?: string;
+  token_type?: string;
+  scope?: string;
+  id_token?: string;
+};
