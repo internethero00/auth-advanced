@@ -72,7 +72,6 @@ export class BaseOAuthService {
     const user = (await userRequest.json()) as extractUserInfoTypes;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const userData = this.extractUserInfo(user);
-    console.log(userData);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {

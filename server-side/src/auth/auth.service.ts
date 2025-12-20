@@ -40,7 +40,12 @@ export class AuthService {
       AuthMethod.CREDENTIALS,
       false,
     );
-    return this.saveSession(req, newUser);
+
+
+    return {
+      message:
+        'User created successfully. Please check your email to verify your account',
+    };
   }
 
   public async login(req: Request, dto: LoginDto) {
@@ -79,14 +84,12 @@ export class AuthService {
   ) {
     const providerInstance = this.providerService.findByService(provider);
     const profile = await providerInstance?.findUserByCode(code);
-    console.log(profile);
     const account = await this.prismaService.account.findFirst({
       where: {
         id: String(profile!.id),
         provider: profile!.provider,
       },
     });
-    // console.log(account);
 
     let user = account?.userId
       ? await this.userService.findById(account.userId)
@@ -95,7 +98,6 @@ export class AuthService {
     if (user) {
       return this.saveSession(req, user);
     }
-    console.log(user);
     if (profile!.provider === 'google') {
       user = await this.userService.create(
         profile!.email,
