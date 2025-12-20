@@ -16,6 +16,7 @@ import { ProviderService } from './provider/provider.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { userCreateYandexChanger } from './provider/services/types/userCreateYandexChanger';
 import { YandexProfile } from './provider/services/types/yandexProfile';
+import { EmailConfirmationService } from './email-confirmation/email-confirmation.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly providerService: ProviderService,
     private readonly prismaService: PrismaService,
+    private readonly emailConfirmationService: EmailConfirmationService,
   ) {}
   public async register(req: Request, dto: RegisterDto) {
     const { email, password, name } = dto;
@@ -41,6 +43,7 @@ export class AuthService {
       false,
     );
 
+    await this.emailConfirmationService.sendVerificationToken(newUser);
 
     return {
       message:
@@ -58,6 +61,11 @@ export class AuthService {
 
     if (!isValidPassword) {
       throw new UnauthorizedException('Invalid password');
+    }
+
+    if (!user.isVerified) {
+      await this.emailConfirmationService.sendVerificationToken(user);
+      throw new UnauthorizedException('Please verify your email');
     }
     return this.saveSession(req, user);
   }
@@ -140,7 +148,7 @@ export class AuthService {
     return this.saveSession(req, user!);
   }
 
-  private async saveSession(req: Request, user: User) {
+  public async saveSession(req: Request, user: User) {
     return new Promise((resolve, reject) => {
       req.session.userId = user.id;
 
