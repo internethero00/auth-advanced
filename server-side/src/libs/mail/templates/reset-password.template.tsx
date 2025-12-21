@@ -3,15 +3,15 @@ import { Html } from '@react-email/html';
 import * as React from 'react';
 
 interface ResetPasswordTemplateProps {
-  domaine: string;
+  domain: string;
   token: string;
 }
 
 export function ResetPasswordTemplate({
-  domaine,
+  domain,
   token,
 }: ResetPasswordTemplateProps) {
-  const resetLink = `${domaine}/auth/new-password?token=${token}`;
+  const resetLink = `${domain}/auth/new-password?token=${token}`;
 
   return (
     <Tailwind>
