@@ -20,7 +20,7 @@ export class PasswordRecoveryService {
     private readonly mailService: MailService,
   ) {}
 
-  public async reset(dto: ResetPasswordDto) {
+  public async resetPassword(dto: ResetPasswordDto) {
     const existingUser = await this.userService.findByEmail(dto.email);
 
     if (!existingUser) {
