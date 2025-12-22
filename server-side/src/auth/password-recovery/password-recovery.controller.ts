@@ -18,14 +18,14 @@ export class PasswordRecoveryController {
   ) {}
 
   @Recaptcha()
-  @Post('reset-password')
+  @Post('reset')
   @HttpCode(HttpStatus.OK)
   public async resetPassword(@Body() dto: ResetPasswordDto) {
     return this.passwordRecoveryService.resetPassword(dto);
   }
 
   @Recaptcha()
-  @Post('new-password/:token')
+  @Post('new/:token')
   @HttpCode(HttpStatus.OK)
   public async newPassword(
     @Body() dto: NewPasswordDto,
