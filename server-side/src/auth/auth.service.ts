@@ -17,6 +17,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { userCreateYandexChanger } from './provider/services/types/userCreateYandexChanger';
 import { YandexProfile } from './provider/services/types/yandexProfile';
 import { EmailConfirmationService } from './email-confirmation/email-confirmation.service';
+import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +27,7 @@ export class AuthService {
     private readonly providerService: ProviderService,
     private readonly prismaService: PrismaService,
     private readonly emailConfirmationService: EmailConfirmationService,
+    private readonly twoFactorAuthService: TwoFactorAuthService,
   ) {}
   public async register(req: Request, dto: RegisterDto) {
     const { email, password, name } = dto;
@@ -66,6 +68,19 @@ export class AuthService {
     if (!user.isVerified) {
       await this.emailConfirmationService.sendVerificationToken(user.email);
       throw new UnauthorizedException('Please verify your email');
+    }
+
+    if (user.isTwoFactorEnabled) {
+      if (!dto.code) {
+        await this.twoFactorAuthService.sendTwoFactorToken(user.email);
+        return {
+          message: 'Please check your email for two factor authentication code',
+        };
+      }
+      await this.twoFactorAuthService.validateTwoFactorToken(
+        user.email,
+        dto.code,
+      );
     }
     return this.saveSession(req, user);
   }
