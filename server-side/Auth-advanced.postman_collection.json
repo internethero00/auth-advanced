@@ -1,0 +1,273 @@
+{
+	"info": {
+		"_postman_id": "4b66cdf0-3f46-47c2-a0ea-a91eeeeb97d0",
+		"name": "Auth-advanced",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45450828",
+		"_collection_link": "https://egor-3487208.postman.co/workspace/egor's-Workspace~74042b53-4e05-4336-836a-0f2870521aeb/collection/45450828-4b66cdf0-3f46-47c2-a0ea-a91eeeeb97d0?action=share&source=collection_link&creator=45450828"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Egor\",\r\n    \"email\": \"egormix1703@gmail.com\",\r\n    \"password\": \"egor2209\",\r\n    \"passwordRepeat\": \"egor2209\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"egormix1703@gmail.com\",\r\n    \"password\": \"egor2209\",\r\n    \"code\": \"450813\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/auth/logout",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "auth/oauth/connect/:provider",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/auth/oauth/connect/google",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"oauth",
+								"connect",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "auth/email-confirmation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"7cd03120-ac00-421c-9a7d-a9f08f96c807\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/email-confirmation",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"email-confirmation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "auth/password-recovery/reset-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"egormix1703@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/password-recovery/reset",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"password-recovery",
+								"reset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "auth/password-recovery/new-password/:token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"egor2209\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/password-recovery/new/:token",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"password-recovery",
+								"new",
+								":token"
+							],
+							"variable": [
+								{
+									"key": "token",
+									"value": "21a1fffa-f698-464b-a5b6-23ea08dd7cbc"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "findProfile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/users/profile",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateProfile",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Egor\",\r\n    \"email\": \"egormix1703@gmail.com\",\r\n    \"isTwoFactorEnabled\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users/profile",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findProfile by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/users/by-id/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"by-id",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
