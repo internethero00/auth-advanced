@@ -43,7 +43,7 @@ export class AuthService {
       false,
     );
 
-    await this.emailConfirmationService.sendVerificationToken(newUser);
+    await this.emailConfirmationService.sendVerificationToken(newUser.email);
 
     return {
       message:
@@ -64,7 +64,7 @@ export class AuthService {
     }
 
     if (!user.isVerified) {
-      await this.emailConfirmationService.sendVerificationToken(user);
+      await this.emailConfirmationService.sendVerificationToken(user.email);
       throw new UnauthorizedException('Please verify your email');
     }
     return this.saveSession(req, user);
