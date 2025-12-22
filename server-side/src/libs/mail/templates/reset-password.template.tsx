@@ -19,7 +19,7 @@ export function ResetPasswordTemplate({
         <Body className="text-black">
           <Heading>Reset your password</Heading>
           <Text>Please. To reset your password - push the link.</Text>
-          <Link href={resetLink}></Link>
+          <Link href={resetLink}>To reset password</Link>
           <Text>
             The Link is available 1 hour. If you did not request this, please
             ignore this email.
